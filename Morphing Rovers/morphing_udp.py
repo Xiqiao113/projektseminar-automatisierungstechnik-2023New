@@ -15,6 +15,8 @@ import torch.nn.functional as F
 from torchvision.transforms import InterpolationMode
 from torchvision.transforms.functional import rotate, gaussian_blur
 from collections import defaultdict
+import matplotlib
+matplotlib.use('Qt5Agg') # added to show plots in ubuntu, error otherwise
 import matplotlib.pyplot as plt
 import os
 
@@ -26,20 +28,20 @@ import os
 # maps: './myfolder/Maps'
 # coordinates: './myfolder/coordinates.txt'
 # example chromosome: './myfolder/example_rover.npy'
-PATH = os.path.join(".", "data", "spoc2", "morphing")
+PATH = os.path.join(".", "data")
 
 # Parameters for the rover modes
-MASK_SIZE = 11
-NUMBER_OF_MODES = 4
+MASK_SIZE = 11          # size of mask (11x11 matrix)
+NUMBER_OF_MODES = 4     # amount of rover modes
 NUM_MODE_PARAMETERS = NUMBER_OF_MODES*MASK_SIZE**2
-MASK_CENTRES = []
+MASK_CENTRES = []       # indices of mask centres, when stored in 1 single array
 for m_id in range(NUMBER_OF_MODES):
     MASK_CENTRES.append(int(m_id*MASK_SIZE**2+0.5*MASK_SIZE**2))
     
 # Size and field of view of rover
 FIELD_OF_VIEW = int(MASK_SIZE/2+1)
-VISIBLE_SIZE = int(8*MASK_SIZE)
-MIN_BORDER_DISTANCE = int(0.6*VISIBLE_SIZE)
+VISIBLE_SIZE = int(8*MASK_SIZE)     # size of the cutout, which the rover sees
+MIN_BORDER_DISTANCE = int(0.6*VISIBLE_SIZE) # minimal distance to border of map
 
 # Cooldown of morphing
 MODE_COOLDOWN = int(VISIBLE_SIZE/MASK_SIZE)
@@ -59,37 +61,37 @@ NETWORK_SETUP = {'filters': 8,
                  'hidden_neurons': [40,40]}
 
 # Rover dynamics
-DELTA_TIME = 1
-MAX_TIME = 500
+DELTA_TIME = 1  # Step of simulation
+MAX_TIME = 500  # max simulation time
 SIM_TIME_STEPS = int(MAX_TIME/DELTA_TIME)
 MAX_VELOCITY = MASK_SIZE
-MAX_DV = DELTA_TIME * MAX_VELOCITY
+MAX_DV = DELTA_TIME * MAX_VELOCITY  # max step size of the rover
 MAX_ANGULAR_VELOCITY = np.pi/4.
 MAX_DA = DELTA_TIME * MAX_ANGULAR_VELOCITY
 
 # Number of maps and scenarios per map
-TOTAL_NUM_MAPS = 6
+TOTAL_NUM_MAPS = 6      # maps in ./data/maps
 MAPS_PER_EVALUATION = 6
-SCENARIOS_PER_MAP = 5
+SCENARIOS_PER_MAP = 5   # 5 samples on each map
 TOTAL_NUM_SCENARIOS = MAPS_PER_EVALUATION*SCENARIOS_PER_MAP
 
 # File path and names
-HEIGHTMAP_NAMES = ['Map1.jpg', 'Map2.JPG', 'Map3.JPG', 'Map4.JPG', 'Map5.JPG', 'Map6.jpg']
+HEIGHTMAP_NAMES = ['Map1.jpg', 'Map2.jpg', 'Map3.jpg', 'Map4.jpg', 'Map5.jpg', 'Map6.jpg']
 COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
 # Kernel size for smoothing maps a little bit with a Gaussian kernel
 BLUR_SIZE = 7
 
-# Loading raw data
+# Loading raw data [X, L_x, L_y, A_x, A_y] = [map number, coordinates landing site, coordinates sample]
 COORDINATE_FILE = open(COORDINATE_NAME, 'r')
 COORDINATES = [[] for map in range(TOTAL_NUM_MAPS)]
 for entry in COORDINATE_FILE.readlines():
     entry = entry.split('\t')
     COORDINATES[int(entry[0])].append([float(x) for x in entry[1:5]])
-SCENARIO_POSITIONS = torch.Tensor(COORDINATES)
+SCENARIO_POSITIONS = torch.Tensor(COORDINATES)  #tensor of coordinates of samples + landing sites
 
 # Constants used for numerical stability and parameter ranges
 EPS_C = (0.03)**2
-FLOAT_MIN = -100
+FLOAT_MIN = -100   #min and max values for parameters of neuronal net
 FLOAT_MAX = 100
 CENTRE_MIN = 1e-16
 
@@ -643,7 +645,7 @@ class MysteriousMars():
         self.heightmap_sizes = [0] * MAPS_PER_EVALUATION
         for counter in range(MAPS_PER_EVALUATION):
             # load maps
-            self.heightmaps[counter] = torch.Tensor(imageio.imread('{}/Maps/{}'.format(PATH, HEIGHTMAP_NAMES[counter])))
+            self.heightmaps[counter] = torch.Tensor(imageio.v2.imread('{}/Maps/{}'.format(PATH, HEIGHTMAP_NAMES[counter])))
             # unify array format of all maps
             if len(self.heightmaps[counter].size()) == 3:
                 self.heightmaps[counter] = self.heightmaps[counter][:,:,0]
@@ -988,4 +990,13 @@ class morphing_rover_UDP:
         y_data = detailed_results[map_id][scenario_id]['mode_efficiency']
         ax.plot(y_data, color = 'k', linewidth= 1)
         
+
+
 udp = morphing_rover_UDP()
+print(udp)
+
+x = udp.example()
+udp.plot(x)
+udp.pretty(x)
+f = udp.fitness(x)
+print(f)
