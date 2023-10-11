@@ -1,3 +1,7 @@
 # Projektseminar Automatisierungstechnik 2023
 
-Herzlich wilkommen zum Projektseminar Automaisierungstechnik im WiSe 23/24. Die Aufgabenstellung dieses Wintersemesters entstammt der ESA. Weiterführende Informationen findet ihr [hier](https://optimise.esa.int/challenge/spoc-2-morphing-rovers/About). ![Rover auf dem Mars](hotpot_ai.png) ![Mutterschiffe vor dem Mars](hotpot_ai2.png)
+Herzlich willkommen zum [Projektseminar Automaisierungstechnik](https://www.etit.tu-darmstadt.de/ris/lehre_ris/lehrveranstaltungen_ris/pro_auto_ris/index.de.jsp) im WiSe 23/24. Die Aufgabenstellung dieses Wintersemesters findet ihr unter 'Aufgabe_Projektseminar.pdf' beschrieben. Weiterführende Informationen findet ihr [hier](https://optimise.esa.int/challenge/spoc-2-morphing-rovers/About). 
+
+![Rover auf dem Mars](hotpot_ai.png) 
+
+![Mutterschiffe vor dem Mars](hotpot_ai2.png)
