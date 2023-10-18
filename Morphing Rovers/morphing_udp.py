@@ -71,7 +71,7 @@ MAX_DA = DELTA_TIME * MAX_ANGULAR_VELOCITY
 
 # Number of maps and scenarios per map
 TOTAL_NUM_MAPS = 6      # maps in ./data/maps
-MAPS_PER_EVALUATION = 6
+MAPS_PER_EVALUATION = 6 # Numer of maps used
 SCENARIOS_PER_MAP = 5   # 5 samples on each map
 TOTAL_NUM_SCENARIOS = MAPS_PER_EVALUATION*SCENARIOS_PER_MAP
 
@@ -890,7 +890,7 @@ class morphing_rover_UDP:
         self.plot_modes(chromosome)
 
         _, detailed_results = self.pretty(chromosome, verbose = False)
-        
+
         _, ax = plt.subplots(MAPS_PER_EVALUATION, SCENARIOS_PER_MAP, figsize=(15,15))
         for map_id in range(MAPS_PER_EVALUATION):
             for scenario_id in range(SCENARIOS_PER_MAP):
