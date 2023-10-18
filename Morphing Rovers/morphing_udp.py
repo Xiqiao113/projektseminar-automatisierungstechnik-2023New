@@ -20,6 +20,7 @@ matplotlib.use('Qt5Agg') # added to show plots in ubuntu, error otherwise
 import matplotlib.pyplot as plt
 import os
 
+
 ### CONSTANTS DEFINING THE PROBLEM
 ############################################################################################################################################
 
@@ -71,7 +72,7 @@ MAX_DA = DELTA_TIME * MAX_ANGULAR_VELOCITY
 
 # Number of maps and scenarios per map
 TOTAL_NUM_MAPS = 6      # maps in ./data/maps
-MAPS_PER_EVALUATION = 6 # Numer of maps used
+MAPS_PER_EVALUATION = 6  # Numer of maps used
 SCENARIOS_PER_MAP = 5   # 5 samples on each map
 TOTAL_NUM_SCENARIOS = MAPS_PER_EVALUATION*SCENARIOS_PER_MAP
 
@@ -757,9 +758,9 @@ class morphing_rover_UDP:
         # Simulates N scenarios, records the results
         for heightmap in range(MAPS_PER_EVALUATION):
             for scenario in range(SCENARIOS_PER_MAP):
-                result = self.run_single_scenario(rover, heightmap, scenario, detailed_results)
-                ind_score = (1+result[0]) * result[1]
-                score += ind_score
+                result = self.run_single_scenario(rover, heightmap, scenario, detailed_results) # contains d(x)/d_0 and T/T_min
+                ind_score = (1+result[0]) * result[1] # computes the score f=T/T_min*(1+d(x)/d_0)
+                score += ind_score                    # sums up all the scores
                 if detailed_results is not None:
                     detailed_results.add(heightmap, scenario, {'fitness': ind_score})
         score = float(score/TOTAL_NUM_SCENARIOS)
@@ -789,7 +790,7 @@ class morphing_rover_UDP:
             scores += '~~~~~~~\n'
             scores += '\t     '
             for i in range(SCENARIOS_PER_MAP):
-                scores += 'Scenario {}\t     '.format(i+1)
+                scores += 'Scenario {}\t '.format(i+1)
             scores += '\n'
             for j in range(MAPS_PER_EVALUATION):
                 for i in range(SCENARIOS_PER_MAP):
@@ -841,8 +842,8 @@ class morphing_rover_UDP:
         
         rover.reset(position)
         distance_vector = sample_position - rover.position
-        original_distance = distance_vector.norm()
-        min_time_possible = original_distance/MAX_VELOCITY
+        original_distance = distance_vector.norm()  #d_0
+        min_time_possible = original_distance/MAX_VELOCITY #T_min - drive in straight line from start to end in v_max
 
         if detailed_results is not None:
             detailed_results.add(map_number, scenario_number, {'x': position[0],
@@ -896,7 +897,7 @@ class morphing_rover_UDP:
             for scenario_id in range(SCENARIOS_PER_MAP):
                 ax_plot = ax_for_plotting(ax, map_id, scenario_id)
                 self._plot_trajectory_of_single_scenario(map_id, scenario_id, ax_plot, detailed_results)
-        ax_for_plotting(ax, 0, 0).set_title('Rover trajectories', fontsize=16)
+        ax_for_plotting(ax, 0, 0).set_title('Rover trajectories', fontsize=13)
         plt.tight_layout()
         
         if plot_modes == True:
@@ -992,11 +993,20 @@ class morphing_rover_UDP:
         
 
 
-udp = morphing_rover_UDP()
-print(udp)
+### Custom Code
+############################################################################################################################################
 
-x = udp.example()
-udp.plot(x)
-udp.pretty(x)
-f = udp.fitness(x)
-print(f)
+# define the UDP (User Defined Problem)
+udp = morphing_rover_UDP()  # define the given UDP
+
+x = udp.example() # load the example rover in ./data/example_rover.npy
+#f = udp.fitness(x) # calculates the fitness score for the chromosome x by simulating all scenarios
+#print(f)
+
+udp.plot(x) # plot the results of the 4 rover masks, the trajectories on all samples
+#udp.pretty(x) # print the fitness for all scenarios
+
+### Create Submission
+############################################################################################################################################
+#from submisson_helper import create_submission
+#create_submission("spoc-2-morphing-rovers","morphing-rovers",x,"submission_file.json","submission_name","submission_description")
