@@ -5,6 +5,7 @@
 ############################################################################################################################################
 
 import numpy as np
+import json
 from math import atan2
 from math import floor
 from math import exp
@@ -19,6 +20,7 @@ import matplotlib
 matplotlib.use('Qt5Agg') # added to show plots in ubuntu, error otherwise
 import matplotlib.pyplot as plt
 import os
+
 
 ### CONSTANTS DEFINING THE PROBLEM
 ############################################################################################################################################
@@ -71,13 +73,14 @@ MAX_DA = DELTA_TIME * MAX_ANGULAR_VELOCITY
 
 # Number of maps and scenarios per map
 TOTAL_NUM_MAPS = 6      # maps in ./data/maps
-MAPS_PER_EVALUATION = 6 # Numer of maps used
+MAPS_PER_EVALUATION = 6  # Numer of maps used
 SCENARIOS_PER_MAP = 5   # 5 samples on each map
 TOTAL_NUM_SCENARIOS = MAPS_PER_EVALUATION*SCENARIOS_PER_MAP
 
 # File path and names
 HEIGHTMAP_NAMES = ['Map1.jpg', 'Map2.jpg', 'Map3.jpg', 'Map4.jpg', 'Map5.jpg', 'Map6.jpg']
-COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
+#COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
+COORDINATE_NAME = os.path.join(PATH, "coordinates.txt")
 # Kernel size for smoothing maps a little bit with a Gaussian kernel
 BLUR_SIZE = 7
 
@@ -103,7 +106,42 @@ MODE_VIEW_RIGHT = MODE_VIEW_LEFT+1
 
 ### UTILITY FUNCTIONS
 ############################################################################################################################################
-    
+
+
+def create_submission(challenge_id, problem_id, x, fn_out = './submission.json', name = '', description= ''):
+    """ The following parameters are mandatory to create a submission file:
+
+        challenge_id: a string of the challenge identifier (found on the corresponding problem page)
+        problem_id: a string of the problem identifier (found on the corresponding problem page)
+        x: for single-objective problems: a list of numbers determining the decision vector
+           for multi-objective problems: a list of list of numbers determining a population of decision vectors
+
+        Optionally provide:
+        fn_out: a string indicating the output path and filename
+        name: a string that can be used to give your submission a title
+        description: a string that can contain meta-information about your submission
+    """
+    assert type(challenge_id) == str
+    assert type(problem_id) == str
+    assert type(x) in [list, np.ndarray]
+    assert type(fn_out) == str
+    assert type(name) == str
+    assert type(description) == str
+
+    # converting numpy datatypes to python datatypes
+    x = np.array(x).tolist()
+
+    d = {'decisionVector':x,
+         'problem':problem_id,
+         'challenge':challenge_id,
+         'name':name,
+         'description':description }
+
+    with open(fn_out, 'wt') as json_file:
+        json.dump([d], json_file, indent = 6)
+
+
+
 def conv_output_shape(h_w, kernel_size=1, stride=1, pad=0, dilation=1):
     '''
     Utility function for computing output of convolutions
@@ -757,9 +795,9 @@ class morphing_rover_UDP:
         # Simulates N scenarios, records the results
         for heightmap in range(MAPS_PER_EVALUATION):
             for scenario in range(SCENARIOS_PER_MAP):
-                result = self.run_single_scenario(rover, heightmap, scenario, detailed_results)
-                ind_score = (1+result[0]) * result[1]
-                score += ind_score
+                result = self.run_single_scenario(rover, heightmap, scenario, detailed_results) # contains d(x)/d_0 and T/T_min
+                ind_score = (1+result[0]) * result[1] # computes the score f=T/T_min*(1+d(x)/d_0)
+                score += ind_score                    # sums up all the scores
                 if detailed_results is not None:
                     detailed_results.add(heightmap, scenario, {'fitness': ind_score})
         score = float(score/TOTAL_NUM_SCENARIOS)
@@ -789,7 +827,7 @@ class morphing_rover_UDP:
             scores += '~~~~~~~\n'
             scores += '\t     '
             for i in range(SCENARIOS_PER_MAP):
-                scores += 'Scenario {}\t     '.format(i+1)
+                scores += 'Scenario {}\t '.format(i+1)
             scores += '\n'
             for j in range(MAPS_PER_EVALUATION):
                 for i in range(SCENARIOS_PER_MAP):
@@ -841,8 +879,8 @@ class morphing_rover_UDP:
         
         rover.reset(position)
         distance_vector = sample_position - rover.position
-        original_distance = distance_vector.norm()
-        min_time_possible = original_distance/MAX_VELOCITY
+        original_distance = distance_vector.norm()  #d_0
+        min_time_possible = original_distance/MAX_VELOCITY #T_min - drive in straight line from start to end in v_max
 
         if detailed_results is not None:
             detailed_results.add(map_number, scenario_number, {'x': position[0],
@@ -896,7 +934,7 @@ class morphing_rover_UDP:
             for scenario_id in range(SCENARIOS_PER_MAP):
                 ax_plot = ax_for_plotting(ax, map_id, scenario_id)
                 self._plot_trajectory_of_single_scenario(map_id, scenario_id, ax_plot, detailed_results)
-        ax_for_plotting(ax, 0, 0).set_title('Rover trajectories', fontsize=16)
+        ax_for_plotting(ax, 0, 0).set_title('Rover trajectories', fontsize=13)
         plt.tight_layout()
         
         if plot_modes == True:
@@ -992,11 +1030,24 @@ class morphing_rover_UDP:
         
 
 
-udp = morphing_rover_UDP()
-print(udp)
 
-x = udp.example()
-udp.plot(x)
-udp.pretty(x)
-f = udp.fitness(x)
+
+### Custom Code
+############################################################################################################################################
+
+# define the UDP (User Defined Problem)
+udp = morphing_rover_UDP()  # define the given UDP
+
+x = udp.example() # load the example rover in ./data/example_rover.npy
+f = udp.fitness(x) # calculates the fitness score for the chromosome x by simulating all scenarios
 print(f)
+
+udp.plot(x) # plot the results of the 4 rover masks, the trajectories on all samples
+udp.pretty(x) # print the fitness for all scenarios
+
+### Submission helper to generate a .json-file for submission to optimize.esa.int.
+############################################################################################################################################
+name_submission = "test_submission_file"                                    # enter submission name
+PATH_SUBMISSION = os.path.join(PATH, "Submission", name_submission+".json") # create path for submission
+create_submission("spoc-2-morphing-rovers","morphing-rovers",
+        x, PATH_SUBMISSION, name_submission,"this is a test submission")  # create .json file at ./data/submission
