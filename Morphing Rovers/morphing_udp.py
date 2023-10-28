@@ -1,6 +1,4 @@
-#THIS IS A TEST
-#This IS ALSO A TEST
-#test test test
+#this is also a test
 
 # Morphing Rover Challenge
 # GECCO 2023 Space Optimisation Competition (SPoC)
