@@ -1,3 +1,6 @@
+#THIS IS A TEST
+#This IS ALSO A TEST
+
 # Morphing Rover Challenge
 # GECCO 2023 Space Optimisation Competition (SPoC)
 
@@ -17,9 +20,10 @@ from torchvision.transforms import InterpolationMode
 from torchvision.transforms.functional import rotate, gaussian_blur
 from collections import defaultdict
 import matplotlib
-matplotlib.use('Qt5Agg') # added to show plots in ubuntu, error otherwise
 import matplotlib.pyplot as plt
 import os
+##matplotlib.use('Qt5Agg')  # added to show plots in ubuntu, error otherwise
+
 
 
 ### CONSTANTS DEFINING THE PROBLEM
@@ -30,7 +34,7 @@ import os
 # maps: './myfolder/Maps'
 # coordinates: './myfolder/coordinates.txt'
 # example chromosome: './myfolder/example_rover.npy'
-PATH = os.path.join(".", "data")
+PATH = 'C:/Users/organ/PycharmProjects/projektseminar-automatisierungstechnik-2023/Morphing Rovers/data'
 
 # Parameters for the rover modes
 MASK_SIZE = 11          # size of mask (11x11 matrix)
@@ -79,8 +83,8 @@ TOTAL_NUM_SCENARIOS = MAPS_PER_EVALUATION*SCENARIOS_PER_MAP
 
 # File path and names
 HEIGHTMAP_NAMES = ['Map1.jpg', 'Map2.jpg', 'Map3.jpg', 'Map4.jpg', 'Map5.jpg', 'Map6.jpg']
-#COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
-COORDINATE_NAME = os.path.join(PATH, "coordinates.txt")
+##COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
+COORDINATE_NAME = '{}/coordinates.txt'.format(PATH)
 # Kernel size for smoothing maps a little bit with a Gaussian kernel
 BLUR_SIZE = 7
 
@@ -114,7 +118,7 @@ def create_submission(challenge_id, problem_id, x, fn_out = './submission.json',
         challenge_id: a string of the challenge identifier (found on the corresponding problem page)
         problem_id: a string of the problem identifier (found on the corresponding problem page)
         x: for single-objective problems: a list of numbers determining the decision vector
-           for multi-objective problems: a list of list of numbers determining a population of decision vectors
+           for multi-objective problems: a list of numbers determining a population of decision vectors
 
         Optionally provide:
         fn_out: a string indicating the output path and filename
@@ -143,6 +147,7 @@ def create_submission(challenge_id, problem_id, x, fn_out = './submission.json',
 
 
 def conv_output_shape(h_w, kernel_size=1, stride=1, pad=0, dilation=1):
+    '''This Function gets the input, the kernel with its size, dilation and stride and gives out the size of the output'''
     '''
     Utility function for computing output of convolutions
     takes a tuple of (h,w) and returns a tuple of (h,w)
@@ -159,7 +164,7 @@ def get_conv_size(network_setup):
     '''
     Function returning the layer size after two convolutions in a neural network.
     '''
-    cwidth,cheight = conv_output_shape([VISIBLE_SIZE+1,VISIBLE_SIZE+1],
+    cwidth, cheight = conv_output_shape([VISIBLE_SIZE+1,VISIBLE_SIZE+1],
                                        network_setup['kernel_size'],
                                        network_setup['stride'],
                                        0,
