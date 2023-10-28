@@ -1,5 +1,5 @@
 #this is also a test
-
+# test von qiao
 # Morphing Rover Challenge
 # GECCO 2023 Space Optimisation Competition (SPoC)
 
@@ -33,7 +33,7 @@ import os
 # maps: './myfolder/Maps'
 # coordinates: './myfolder/coordinates.txt'
 # example chromosome: './myfolder/example_rover.npy'
-PATH = 'C:/Users/organ/PycharmProjects/projektseminar-automatisierungstechnik-2023/Morphing Rovers/data'
+PATH = 'D:\projektseminar-automatisierungstechnik-2023\Morphing Rovers\data'
 
 # Parameters for the rover modes
 MASK_SIZE = 11          # size of mask (11x11 matrix)
