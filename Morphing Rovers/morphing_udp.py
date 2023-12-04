@@ -10,6 +10,7 @@ import numpy as np
 import json
 from math import atan2
 from math import floor
+import time
 from math import exp
 import imageio
 import torch
@@ -22,6 +23,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 ##matplotlib.use('Qt5Agg')  # added to show plots in ubuntu, error otherwise
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 
 
@@ -33,7 +36,7 @@ import os
 # maps: './myfolder/Maps'
 # coordinates: './myfolder/coordinates.txt'
 # example chromosome: './myfolder/example_rover.npy'
-PATH = 'D:\projektseminar-automatisierungstechnik-2023\Morphing Rovers\data'
+PATH = './data'
 
 # Parameters for the rover modes
 MASK_SIZE = 11          # size of mask (11x11 matrix)
@@ -106,6 +109,7 @@ VIEW_LEFT = int(VISIBLE_SIZE/2)
 VIEW_RIGHT = VIEW_LEFT+1
 MODE_VIEW_LEFT = int(MASK_SIZE/2)
 MODE_VIEW_RIGHT = MODE_VIEW_LEFT+1
+
 
 ### UTILITY FUNCTIONS
 ############################################################################################################################################
@@ -525,7 +529,10 @@ class Controller(nn.Module):
 
 ### ROVER CLASS
 ############################################################################################################################################
-
+DATA_VIEW = []
+DATA_STATE = []
+DATA_ANG = []
+LATENT_STATE = []
 class Rover:
     def __init__(self, chromosome):
         '''
@@ -581,7 +588,7 @@ class Rover:
         self.mode_efficiency = 0
         self.cooldown = 0
         self.position = start_position
-        self.latent_state = torch.zeros(NETWORK_SETUP['hidden_neurons'][1])
+        self.latent_state = torch.zeros(1,NETWORK_SETUP['hidden_neurons'][1])
     
     def velocity_calculation(self, mode_view):
         '''
@@ -644,8 +651,11 @@ class Rover:
                                     float(distance_to_sample), self.angle/np.pi/2]+self.onehot_representation_of_mode)
         # The neural network takes the rover view and rover state as input
         # and returns whether the rover should morph and how the orientation should be changed
+        LATENT_STATE.append(self.latent_state.detach())
         switching_mode, angular_change, self.latent_state = self.Control(rover_view, rover_state, self.latent_state)
-        
+        DATA_VIEW.append(rover_view.detach())
+        DATA_STATE.append(rover_state.detach())
+        DATA_ANG.append(angle_diff / MAX_DA)
         # Save angular velocity change obtained from neural network
         angular_velocity_factor = angular_change.detach().numpy()[0]
         # Calculate efficiency of current rover mode on current terrain
@@ -671,6 +681,9 @@ class Rover:
         
         # update position and orientation of the rover
         self.position.data = self.position + MAX_DV * velocity_factor * self.direction
+        # angular_velocity_factor = (angle_to_sample - self.angle) / MAX_DA
+        # angular_velocity_factor = angle_diff / MAX_DA
+
         self.angle = self.angle + MAX_DA * angular_velocity_factor
 
 ### CLASS HOLDING THE LANDSCAPE DATA
@@ -1041,8 +1054,8 @@ class morphing_rover_UDP:
 
 # define the UDP (User Defined Problem)
 udp = morphing_rover_UDP()  # define the given UDP
-
 x = udp.example() # load the example rover in ./data/example_rover.npy
+# x = np.load('./data/train_data/test.npy')
 f = udp.fitness(x) # calculates the fitness score for the chromosome x by simulating all scenarios
 print(f)
 
@@ -1055,3 +1068,9 @@ name_submission = "test_submission_file"                                    # en
 PATH_SUBMISSION = os.path.join(PATH, "Submission", name_submission+".json") # create path for submission
 create_submission("spoc-2-morphing-rovers","morphing-rovers",
         x, PATH_SUBMISSION, name_submission,"this is a test submission")  # create .json file at ./data/submission
+
+print(time.time())
+torch.save(torch.stack(DATA_VIEW, dim=0), './data/train_data/view.t')
+torch.save(torch.stack(DATA_STATE, dim=0), './data/train_data/state.t')
+torch.save(torch.concatenate(LATENT_STATE, dim=0), './data/train_data/latent_state.t')
+np.save('./data/train_data/angle.npy', np.array(DATA_ANG))
