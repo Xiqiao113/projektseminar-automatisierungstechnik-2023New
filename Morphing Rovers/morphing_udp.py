@@ -10,7 +10,6 @@ import numpy as np
 import json
 from math import atan2
 from math import floor
-import time
 from math import exp
 import imageio
 import torch
@@ -533,6 +532,7 @@ DATA_VIEW = []
 DATA_STATE = []
 DATA_ANG = []
 LATENT_STATE = []
+MODE_VIEW = []
 class Rover:
     def __init__(self, chromosome):
         '''
@@ -744,7 +744,7 @@ class MysteriousMars():
         mode_view = rotated_slice[VIEW_LEFT-MODE_VIEW_LEFT:VIEW_LEFT+MODE_VIEW_RIGHT,\
                                VIEW_LEFT-MODE_VIEW_LEFT:VIEW_LEFT+MODE_VIEW_RIGHT]
         mode_view = mode_view - mode_view[MODE_VIEW_LEFT,MODE_VIEW_LEFT] + 1
-        
+        MODE_VIEW.append(mode_view)
         return rover_view, mode_view
 
 ############################################################################################################################################
@@ -1054,6 +1054,7 @@ class morphing_rover_UDP:
 
 # define the UDP (User Defined Problem)
 udp = morphing_rover_UDP()  # define the given UDP
+
 x = udp.example() # load the example rover in ./data/example_rover.npy
 # x = np.load('./data/train_data/test.npy')
 f = udp.fitness(x) # calculates the fitness score for the chromosome x by simulating all scenarios
@@ -1069,8 +1070,18 @@ PATH_SUBMISSION = os.path.join(PATH, "Submission", name_submission+".json") # cr
 create_submission("spoc-2-morphing-rovers","morphing-rovers",
         x, PATH_SUBMISSION, name_submission,"this is a test submission")  # create .json file at ./data/submission
 
-print(time.time())
-torch.save(torch.stack(DATA_VIEW, dim=0), './data/train_data/view.t')
-torch.save(torch.stack(DATA_STATE, dim=0), './data/train_data/state.t')
-torch.save(torch.concatenate(LATENT_STATE, dim=0), './data/train_data/latent_state.t')
-np.save('./data/train_data/angle.npy', np.array(DATA_ANG))
+
+SAVE_TRAIN_DATA = True
+SAVE_MODE_VIEW = False
+
+if SAVE_TRAIN_DATA:
+    torch.save(torch.stack(DATA_VIEW, dim=0), './data/train_data/view.t')
+    torch.save(torch.stack(DATA_STATE, dim=0), './data/train_data/state.t')
+    torch.save(torch.concatenate(LATENT_STATE, dim=0), './data/train_data/latent_state.t')
+    np.save('./data/train_data/angle.npy', np.array(DATA_ANG))
+
+if SAVE_MODE_VIEW:
+    torch.save(torch.stack(MODE_VIEW, dim=0), 'data/train_data/mode_view.t')
+
+# for i in range(6):
+#     torch.save(udp.env.heightmaps[i], f'data/train_data/heightmaps_{i}.t')
