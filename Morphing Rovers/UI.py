@@ -5,6 +5,7 @@ from Aufgabe2Ui import *
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
 
+
 class LoginWindow(QMainWindow):
 
     # button_clicked = pyqtSignal(int)
@@ -20,13 +21,11 @@ class LoginWindow(QMainWindow):
         # self.ui.Aufgabe2_btn.clicked.connect(lambda: self.button_clicked.emit(2))
         self.show()
 
-
     def login_in1(self):
         self.win = Aufgabe1Window()
         self.close()
 
     def getAufgabe1(self):
-
         self.x = 1
         return self.x
 
@@ -38,6 +37,8 @@ class LoginWindow(QMainWindow):
         self.x = 2
         return self.x
 
+    def get_infos(self):
+        return 0, 0
 
 
 class Aufgabe1Window(QMainWindow):
@@ -62,10 +63,7 @@ class Aufgabe1Window(QMainWindow):
         Szen_Nr = self.ui.S_lineEdit.text()
 
         # self.x, self.y = get_karteinfos(Karte_Nr, Szen_Nr)
-        return int(Karte_Nr),  int(Szen_Nr)
-
-
-
+        return int(Karte_Nr), int(Szen_Nr)
 
     def enable_submit_btn1(self):
         Karte_Nr = self.ui.K_lineEdit.text()
@@ -122,7 +120,7 @@ class Aufgabe2Window(QMainWindow):
             R_y = float(R_y)
             P_x = float(P_x)
             P_y = float(P_y)
-            if  0 <= R_x <= 2800 and 0 <= R_y <= 2800 and 0 <= P_x <= 2800 and 0 <= P_y <= 2800:
+            if 0 <= R_x <= 2800 and 0 <= R_y <= 2800 and 0 <= P_x <= 2800 and 0 <= P_y <= 2800:
                 self.ui.sub_2.setEnabled(True)
             else:
                 self.ui.sub_2.setEnabled(False)
@@ -131,8 +129,9 @@ class Aufgabe2Window(QMainWindow):
 
 
 if __name__ == '__main__':
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling) #
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)  #
     app = QApplication(sys.argv)
+
 
     def get_coordinates(x1_str, y1_str, x2_str, y2_str):
         x1 = float(x1_str)
@@ -146,10 +145,10 @@ if __name__ == '__main__':
         print("Rover:  =", Rover_coord)
         print("Probe:  =", Probe_coord)
 
-        return  Rover_coord, Probe_coord
+        return Rover_coord, Probe_coord
+
 
     def get_karteinfos(K_str, S_str):
-
         K_Nr = int(K_str)
         S_Nr = int(S_str)
 
@@ -158,9 +157,5 @@ if __name__ == '__main__':
         return K_Nr, S_Nr
 
 
-
     win = LoginWindow()
     sys.exit(app.exec_())
-
-
-
