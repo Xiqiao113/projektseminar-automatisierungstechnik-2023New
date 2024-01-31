@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 import sys
 
 class LoginWindow(QMainWindow):
+
+    # button_clicked = pyqtSignal(int)
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
@@ -13,7 +15,9 @@ class LoginWindow(QMainWindow):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.ui.Aufgabe1_btn.clicked.connect(self.login_in1)
+        # self.ui.Aufgabe1_btn.clicked.connect(lambda: self.button_clicked.emit(1))
         self.ui.Aufgabe2_btn.clicked.connect(self.login_in2)
+        # self.ui.Aufgabe2_btn.clicked.connect(lambda: self.button_clicked.emit(2))
         self.show()
 
 
@@ -21,9 +25,18 @@ class LoginWindow(QMainWindow):
         self.win = Aufgabe1Window()
         self.close()
 
+    def getAufgabe1(self):
+
+        self.x = 1
+        return self.x
+
     def login_in2(self):
         self.win = Aufgabe2Window()
         self.close()
+
+    def getAufgabe2(self):
+        self.x = 2
+        return self.x
 
 
 
@@ -48,8 +61,11 @@ class Aufgabe1Window(QMainWindow):
         Karte_Nr = self.ui.K_lineEdit.text()
         Szen_Nr = self.ui.S_lineEdit.text()
 
+        # self.x, self.y = get_karteinfos(Karte_Nr, Szen_Nr)
+        return int(Karte_Nr),  int(Szen_Nr)
 
-        print("the chosen Szenario is map:" , Karte_Nr , 'Senario:' ,Szen_Nr)
+
+
 
     def enable_submit_btn1(self):
         Karte_Nr = self.ui.K_lineEdit.text()
@@ -114,9 +130,6 @@ class Aufgabe2Window(QMainWindow):
             self.ui.sub_2.setEnabled(False)
 
 
-
-
-
 if __name__ == '__main__':
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling) #
     app = QApplication(sys.argv)
@@ -134,6 +147,17 @@ if __name__ == '__main__':
         print("Probe:  =", Probe_coord)
 
         return  Rover_coord, Probe_coord
+
+    def get_karteinfos(K_str, S_str):
+
+        K_Nr = int(K_str)
+        S_Nr = int(S_str)
+
+        print("the chosen Szenario is map:", K_Nr, 'Senario:', S_Nr)
+
+        return K_Nr, S_Nr
+
+
 
     win = LoginWindow()
     sys.exit(app.exec_())
