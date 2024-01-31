@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Aufgabe2_MainWindow</class>
+ <widget class="QMainWindow" name="Aufgabe2_MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="Aufgabe2_frame">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>40</y>
+      <width>521</width>
+      <height>471</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>521</width>
+      <height>431</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#Aufgabe2_frame{
+	border-image: url(:/bg/icons/earth.jpg);
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="Aufgabe2_back_btn">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>61</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-image: url(:/bg/icons/arrow.png);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>20</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-image: url(:/bg/icons/close.webp);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="sub_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>300</y>
+       <width>141</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 13pt &quot;Lucida Calligraphy&quot;;
+	color: rgb(255, 255, 255);
+	border-radius:7px;
+}
+QPushButton:disabled {
+	font: 13pt &quot;Lucida Calligraphy&quot;;
+	color: rgba(255, 255, 255,0);
+	border-radius:7px;
+}
+QPushButton:pressed{
+	padding-top:5px;
+    padding-left:5px
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Bestätigen</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Rover_btn">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>130</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 15pt &quot;Lucida Calligraphy&quot;;
+	color: rgb(255, 255, 255);
+	border-radius:7px;
+}
+QPushButton:pressed{
+	padding-top:5px;
+    padding-left:5px
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Rover</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Probe_btn">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>250</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 15pt &quot;Lucida Calligraphy&quot;;
+	color: rgb(255, 255, 255);
+	border-radius:7px;
+}
+QPushButton:pressed{
+	padding-top:5px;
+    padding-left:5px
+}</string>
+     </property>
+     <property name="text">
+      <string>Probe</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="R_x_label">
+     <property name="geometry">
+      <rect>
+       <x>123</x>
+       <y>131</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Lucida Calligraphy&quot;;
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>X:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="R_y_label">
+     <property name="geometry">
+      <rect>
+       <x>123</x>
+       <y>160</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Lucida Calligraphy&quot;;
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>Y:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="P_x_label">
+     <property name="geometry">
+      <rect>
+       <x>123</x>
+       <y>250</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Lucida Calligraphy&quot;;
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>X:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="P_y_label">
+     <property name="geometry">
+      <rect>
+       <x>123</x>
+       <y>280</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 15pt &quot;Lucida Calligraphy&quot;;
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>Y:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Rover_x">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>130</y>
+       <width>113</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+	font: 20pt &quot;Lucida Calligraphy&quot;;;
+	color: rgb(255, 255, 255);
+	background-color: rgba(255, 255, 255,0);
+	border:none;
+	border-bottom:1px solid white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Rover_y">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>160</y>
+       <width>113</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+	font: 20pt &quot;Lucida Calligraphy&quot;;;
+	color: rgb(255, 255, 255);
+	background-color: rgba(255, 255, 255,0);
+	border:none;
+	border-bottom:1px solid white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Probe_x">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>250</y>
+       <width>113</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+	font: 20pt &quot;Lucida Calligraphy&quot;;;
+	color: rgb(255, 255, 255);
+	background-color: rgba(255, 255, 255,0);
+	border:none;
+	border-bottom:1px solid white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Probe_y">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>280</y>
+       <width>113</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+	font: 20pt &quot;Lucida Calligraphy&quot;;;
+	color: rgb(255, 255, 255);
+	background-color: rgba(255, 255, 255,0);
+	border:none;
+	border-bottom:1px solid white;
+}</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="res33.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Aufgabe2_MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>555</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>show_Rover_hide()</slot>
+  <slot>show_Probe_hide()</slot>
+ </slots>
+</ui>

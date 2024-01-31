@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="bild">
+    <file>icons/arrow.png</file>
+    <file>icons/close.webp</file>
+    <file>icons/earth.jpg</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>Morphing Rovers/Qt2Unity/icons/close.webp</file>
+    <file>Morphing Rovers/Qt2Unity/icons/celestial.jpg</file>
+    <file>Morphing Rovers/Qt2Unity/icons/smallspaceship.png</file>
+  </qresource>
+</RCC>
