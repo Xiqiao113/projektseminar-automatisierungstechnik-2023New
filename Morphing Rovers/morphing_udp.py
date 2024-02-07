@@ -3,8 +3,8 @@
 # Morphing Rover Challenge
 # GECCO 2023 Space Optimisation Competition (SPoC)
 
-### LOADING PACKAGES
-############################################################################################################################################
+# ## LOADING PACKAGES
+# ###########################################################################################################################################
 
 import numpy as np
 import json
@@ -18,7 +18,7 @@ from torchvision.transforms import InterpolationMode
 from torchvision.transforms.functional import rotate, gaussian_blur
 from collections import defaultdict
 import matplotlib.pyplot as plt
-##matplotlib.use('Qt5Agg')  # added to show plots in ubuntu, error otherwise
+#matplotlib.use('Qt5Agg')  # added to show plots in ubuntu, error otherwise
 import os
 import time
 from UI import *
@@ -634,6 +634,8 @@ class Rover:
         best_mode = np.argmax(velocities)
 
         return best_mode
+
+    def update_rover_state(self, rover_view, mode_view, distance_vector, original_distance):
         """
         Updates the rover state variables for the current timestep.
 
@@ -643,8 +645,6 @@ class Rover:
             distance_vector: the vector from the rover to the target
             original_distance: the scalar distance from the starting point to the target
         """
-
-    def update_rover_state(self, rover_view, mode_view, distance_vector, original_distance):
         # Calculate angle and distance between rover and sample
         angle_to_sample = atan2(distance_vector[1], distance_vector[0])
         distance_to_sample = distance_vector.norm() / original_distance
@@ -730,7 +730,7 @@ class MysteriousMars():
 
         Args:
             position: the vector position of the rover
-            direction: the unit vector direction the rover is travelling in
+            direction_angle: the unit vector direction the rover is travelling in
             map_id: the ID of the height map used in the scenario
         Returns:
             rover view: top-down, unrotated local terrain view
@@ -897,6 +897,7 @@ class morphing_rover_UDP:
             rover: the rover object to be used
             map_number: index for which map the scenario will use
             scenario_number: index for which positions the scenario will use
+            detailed_results: variable of type Record, that stores results of simulation
         Returns:
             d: the normalised distance of the rover from the target (normalised with original distance)
             T: the normalised time taken for the scenario to complete (normalised with optimal time, i.e.,
