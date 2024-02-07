@@ -952,18 +952,15 @@ class morphing_rover_UDP:
     def run_single_scenario2(self, rover, map_number, position_rover_x, position_rover_y, position_probe_x,
                              position_probe_y, detailed_results):
         """
-        Function for running a single scenario on a map given a rover.
-        Maximum simulation time is 500 timesteps, in which the neural network of the rover determines whether to switch
-        the rover's form and how to change the orientation of the rover at each timestep. Position updates are done
-        by comparing the terrain the rover is standing on with the mask of the active mode (using a function).
-        If the rover reaches a certain radius around the sample the scenario is completed early.
-        If the for loop ends or the rover travels outside of the map, the function records no samples saved and the time
-        returned is the maximum simulation time.
-        The simulations always begin with the rover in its first form, with the orientation aligned with the x-axis (eastward).
-
+        Same function as run_single_scenario but specified for Aufgabe 2
         Args:
             rover: the rover object to be used
-            map_number: index for which map the scenario will use
+            map_number: index for which map the scenario will use, which is always number 2
+            position_rover_x: x-value for rover start position
+            position_rover_y: y-value for rover start position
+            position_probe_x: x-value for rover end position
+            position_probe_y: y-value for rover end position
+            detailed_results: variable of type Record, that stores results of simulation
         Returns:
             d: the normalised distance of the rover from the target (normalised with original distance)
             T: the normalised time taken for the scenario to complete (normalised with optimal time, i.e.,
