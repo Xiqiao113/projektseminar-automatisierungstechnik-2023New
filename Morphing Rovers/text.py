@@ -16,7 +16,7 @@ sys.exit(result)
 
 # def readXValueFromFile():
 #     try:
-#         with open('infos.txt', 'r') as file:
+#         with open('user_input.txt', 'r') as file:
 #             value_str = file.read().strip()
 #             value = int(value_str)
 #             return value

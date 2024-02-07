@@ -68,7 +68,7 @@ class Aufgabe1Window(QMainWindow):
             Karte_Nr_int = int(Karte_Nr)
             Szen_Nr_int = int(Szen_Nr)
 
-            with open('infos.txt', 'a') as file:
+            with open('user_input.txt', 'a') as file:
                 file.write(f"\t{Karte_Nr_int}\t{Szen_Nr_int}\n")  # Formatting strings with newlines
         except ValueError:
 
@@ -124,7 +124,7 @@ class Aufgabe2Window(QMainWindow):
             P_x_float = float(P_x)
             P_y_float = float(P_y)
             # write to a file
-            with open('infos.txt', 'a') as file:  # Using the append mode
+            with open('user_input.txt', 'a') as file:  # Using the append mode
                 file.write(f"\t{R_x_float}\t{R_y_float}\t{P_x_float}\t{P_y_float}\n")  # Use \t for Tab Separation
         except ValueError:
             print("not valuable float")
@@ -151,7 +151,7 @@ class Aufgabe2Window(QMainWindow):
 # from texttext import collect_data
 def handleXValueUpdated(value):
     # print("new x:", value)
-    with open('infos.txt', 'w') as file:
+    with open('user_input.txt', 'w') as file:
         file.write(str(value))
 
 

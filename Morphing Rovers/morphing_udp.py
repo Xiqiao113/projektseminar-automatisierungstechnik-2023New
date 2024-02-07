@@ -20,6 +20,7 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 ##matplotlib.use('Qt5Agg')  # added to show plots in ubuntu, error otherwise
 import os
+import time
 from UI import *
 import UI
 
@@ -948,7 +949,8 @@ class morphing_rover_UDP:
         # If the for loop ends with no result, return end distance and maximum time
         return current_distance / original_distance, MAX_TIME / min_time_possible
 
-    def run_single_scenario2(self, rover, map_number, position_rover_x, position_rover_y, position_probe_x, position_probe_y, detailed_results):
+    def run_single_scenario2(self, rover, map_number, position_rover_x, position_rover_y, position_probe_x,
+                             position_probe_y, detailed_results):
         """
         Function for running a single scenario on a map given a rover.
         Maximum simulation time is 500 timesteps, in which the neural network of the rover determines whether to switch
@@ -982,11 +984,11 @@ class morphing_rover_UDP:
         min_time_possible = original_distance / MAX_VELOCITY  # T_min - drive in straight line from start to end in v_max
 
         if detailed_results is not None:
-            detailed_results.add({'x': position[0],
-                                  'y': position[1],
-                                  'mode': rover.current_mode,
-                                  'direction': rover.angle / np.pi * 180,
-                                  'mode_efficiency': rover.mode_efficiency})
+            detailed_results.add(map_number, 1, {'x': position[0],
+                                                 'y': position[1],
+                                                 'mode': rover.current_mode,
+                                                 'direction': rover.angle / np.pi * 180,
+                                                 'mode_efficiency': rover.mode_efficiency})
 
         # Runs the scenario for X number of timesteps, where X is the max time / the time increment
         for timestep in range(0, SIM_TIME_STEPS):
@@ -995,11 +997,11 @@ class morphing_rover_UDP:
             distance_vector = sample_position - rover.position
 
             if detailed_results is not None:
-                detailed_results.add({'x': rover.position[0],
-                                      'y': rover.position[1],
-                                      'mode': rover.current_mode,
-                                      'direction': rover.angle / np.pi * 180,
-                                      'mode_efficiency': rover.mode_efficiency})
+                detailed_results.add(map_number, 1, {'x': rover.position[0],
+                                                     'y': rover.position[1],
+                                                     'mode': rover.current_mode,
+                                                     'direction': rover.angle / np.pi * 180,
+                                                     'mode_efficiency': rover.mode_efficiency})
 
             current_distance = distance_vector.norm()
 
@@ -1159,8 +1161,7 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-# Yassir filepath:"C:/Users/organ/Animation Rover/Assets/Resources/punkte.json"
-def save_results(filepath, map, scenario):
+def save_results_aufgabe1(filepath, map, scenario, results):
     """
     Function to save results in a JSON File.
     Function first saves results as JSON,
@@ -1171,6 +1172,7 @@ def save_results(filepath, map, scenario):
         unity project that creates the animation
         map: Choose map one to six
         scenario: Choose which scenario data to save
+        results: variable created by pretty(x) that contains all data recorded in one run
     """
 
     with open(filepath, 'w') as j_file:
@@ -1187,64 +1189,92 @@ def save_results(filepath, map, scenario):
     with open(filepath, 'w') as json_file:
         json.dump(jsonData, json_file, indent=3)
 
-# def save_results2(filepath, results):
-#     """
-#     Function to save results from Aufgabe 2 in a JSON File.
-#     Function first saves results as JSON,
-#     then restructures data as all values are saved twice, and then saves JSON file at filepath.
-#
-#     Args:
-#         filepath: filepath JSON file is saved to, filepath needs to be Resources path of
-#         unity project that creates the animation
-#         map: Choose map one to six
-#         scenario: Choose which scenario data to save
-#     """
-#
-#     with open(filepath, 'w') as j_file:
-#         json.dump(results, j_file, cls=NumpyEncoder, indent=1)
-#
-#     names = ['x', 'y', 'mode', 'direction', 'mode_efficiency', 'fitness']
-#
-#     with open(filepath) as json_file:
-#         jsonData = json.load(json_file)
-#
-#     for i in names:
-#         jsonData[i] = jsonData[i][:len(jsonData[i]) // 2]
-#
-#     with open(filepath, 'w') as json_file:
-#         json.dump(jsonData, json_file, indent=3)
+
+def save_results_aufgabe2(filepath, results_2):
+    """
+    Function to save results from Aufgabe 2 in a JSON File.
+
+    Args:
+        filepath: filepath JSON file is saved to, filepath needs to be Resources path of
+        unity project that creates the animation
+        results_2: variable of type Record that contains the x, y, mode, mode_efficiency and fitness value
+    """
+
+    with open(filepath, 'w') as j_file:
+        json.dump(results_2[1][1], j_file, cls=NumpyEncoder, indent=1)
+
+
+def read_user_input(file_path):
+    """
+    Function that reads text file that was created by user-interface and saves user input
+    as single floats inside a list
+
+    Args:
+        file_path: path to text file to read
+    Returns:
+        list_user_input: a list with floats which represent user input
+    """
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        list_user_input = [float(value) for line in lines for value in line.strip().split('\t')]
+        return list_user_input
+
+
+def run_and_save(values_list):
+    """
+    Function that runs the scenario for Aufgabe1 or Aufgabe2 and saves the results using save_results_aufgabe1
+    and save_results_aufgabe2 as well as run_single_scenario2.
+    ALso saves the map that was chosen for Aufgabe1 in mapChooser to select that map
+    as the active one in Unity
+
+    Args:
+        values_list: list that contains user input
+    """
+    aufgabe = values_list[0]
+    if aufgabe == 1:
+        x = np.load('./data/train_data/v2_test.npy')
+        _, results = udp.pretty(x)
+        save_results_aufgabe1(filepath_results, int(values_list[1]), int(values_list[2]), results)
+        print('Saved results from Aufgabe1!')
+        with open(filepath_mapChooser, 'w') as f:
+            f.write(str(int(values_list[1])))
+        print('Saved map chosen to mapChooser!')
+    elif aufgabe == 2:
+        x = np.load('./data/train_data/v3_test.npy')
+        rover = Rover(x)
+        rover_x = values_list[1]
+        rover_y = values_list[2]
+        probe_x = values_list[3]
+        probe_y = values_list[4]
+        udp.run_single_scenario2(rover, 1, rover_x, rover_y, probe_x, probe_y, results_2)
+        save_results_aufgabe2(filepath_results, results_2)
+        print('Saves results from Aufgabe2!')
+    else:
+        print('Fehler bei Eingabe der Aufgabe')
+
+
+# set paths to save user input and results to
+filepath_user_input = 'user_input.txt'
+filepath_results = "C:/Users/organ/Animation Rover/Assets/Resources/punkte.json"
+filepath_mapChooser = "C:/Users/organ/Animation Rover/Assets/Resources/mapChooser.txt"
 
 # define the UDP (User Defined Problem)
 udp = morphing_rover_UDP()  # define the given UDP
 
+# Open up User Interface
 QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)  #
 app = QApplication(sys.argv)
-win = UI.LoginWindow()
+win = LoginWindow()
+
+win.xValueUpdated.connect(handleXValueUpdated)
+
 win.show()
-map_number, scenario_number = win.get_infos()
+result = app.exec_()
 
-print(map_number, scenario_number)
-# map_number, scenario_number = 0,0
-# results2 = {}
-filepath = "C:/Users/organ/Animation Rover/Assets/Resources/punkte.json"
-# aufgabe = 1
+results_2 = Record()
+run_and_save(read_user_input(filepath_user_input))
 
-# if aufgabe == 1:
-x = np.load('./data/train_data/v2_test.npy')
-# placeholder, results = udp.pretty(x)  # print the fitness for all scenarios
-# save_results(filepath, 1, 1)
-# elif aufgabe == 2:
-#     x = np.load('./data/train_data/v3_test.npy')
-#     rover = Rover(x)
-#     #udp.run_single_scenario2(rover, 1, rover_x, rover_y, probe_x, probe_y, results2)
-# else:
-#     print('Fehler bei Eingabe der Aufgabe')
-
-
-# udp.plot(x)  # plot the results of the 4 rover masks, the trajectories on all samples
-
-sys.exit(app.exec_())
-
+# Save training data
 # for i in range(6):
 #     torch.save(udp.env.heightmaps[i], f'data/train_data/heightmaps_{i}.t')
 # SAVE_TRAIN_DATA = False
